@@ -1,0 +1,51 @@
+# Render Blueprint — deploy CreativeFlow AI with one click.
+# Docs: https://render.com/docs/blueprint-spec
+# 1. Push this repo to GitHub and connect it in Render.
+# 2. Click "New + → Blueprint" and select this repo — Render provisions the
+#    Postgres service and the web service, then runs the Dockerfile.
+
+databases:
+  - name: creativeflow-db
+    plan: free            # upgrade to starter/production as you scale
+    databaseName: creativeflow
+    user: creativeflow
+
+services:
+  - type: web
+    name: creativeflow-web
+    runtime: docker
+    repo: https://github.com/YOUR_USER/creativeflow-ai
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: creativeflow-db
+          property: connectionString
+      - key: DATABASE_OWNER_URL
+        fromDatabase:
+          name: creativeflow-db
+          property: connectionString
+      - key: PUBLIC_ORIGIN
+        value: https://creativeflow.onrender.com
+      - key: APP_SECRET
+        generateValue: true
+      # Object storage (S3 or S3-compatible) — set these in Render manually.
+      - key: S3_ENDPOINT
+        value: https://s3.us-east-1.amazonaws.com
+      - key: S3_REGION
+        value: us-east-1
+      - key: S3_BUCKET
+        value: creativeflow-assets
+      # Stripe — set manually from your live account.
+      - key: STRIPE_ENABLED
+        value: "true"
+    disk:
+      name: runtime
+      mountPath: /app/server/storage
+      sizeGB: 1
