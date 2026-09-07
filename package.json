@@ -1,0 +1,15 @@
+{
+  "name": "creativeflow-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CreativeFlow AI — deployable SaaS: Express + PostgreSQL (RLS) + S3 + Stripe",
+  "scripts": {
+    "setup": "cd server && npm install",
+    "db:up": "docker compose up -d",
+    "db:migrate": "docker compose exec postgres psql -U cf_admin -d creativeflow -f /schema.sql && docker compose exec postgres psql -U cf_admin -d creativeflow -f /rls.sql",
+    "dev": "cd server && npm run dev",
+    "build": "cd server && npm run build",
+    "start": "cd server && npm start",
+    "test": "cd server && npm test"
+  }
+}
