@@ -1,0 +1,12 @@
+# Railway deployment config.
+# Railway builds the Dockerfile; the Dockerfile already runs migrations on boot.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Migrations + app boot happen inside the container (see Dockerfile CMD).
+startCommand = "node server/scripts/migrate.mjs && node server/dist/index.js"
+healthcheckPath = "/health"
+healthcheckTimeout = 120
